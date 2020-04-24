@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:starspat/screens/chart_screen.dart';
+import 'package:starspat/model/bar_chart_data.dart';
 import 'package:starspat/model/self_assessment_classes.dart';
 import 'package:starspat/model/stars_account.dart';
 import 'package:starspat/networking/starsclient.dart';
@@ -65,14 +67,17 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
   }
 
   Widget _buildSelfAssesmentHome() {
-    bool hasError = true;
-
     return FutureBuilder<RangeValueList>(
       future: STARSRestfulClient.apiRangeParamValues(widget.account.profileID),
       builder: (BuildContext context, AsyncSnapshot<RangeValueList> snapshot) {
         Widget child;
 
         if (snapshot.hasData) {
+          // να πάρουμε από το snapshot.hasData μία λίστα με τον τύπου των παραμέτρων (π.χ. pain, stress)
+          // [
+          //   {id:1, name:Pain, valueFrom:1, step:5, valueUntil:100},
+          //   {id:2, name:Stress, valueFrom:1, step:5, valueUntil:100},
+          // ]
           child = Container(
             margin: EdgeInsets.only(top: 50.0, bottom: 50.0),
             child: Column(
@@ -94,20 +99,57 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                               SizedBox(width: 20.0),
                               Expanded(
                                 child: Text(
-                                  snapshot.data.rangeTypes.keys.toList()[index],
+                                  snapshot.data.rangeTypes[index].name,
                                   style: TextStyle(fontSize: 22.0),
                                 ),
                               ),
-                              Icon(
-                                Icons.edit,
-                                //color: Colors.green,
-                                size: 60,
-                              ),
-                              Icon(
-                                Icons.show_chart,
-                                //color: Colors.green,
-                                size: 60,
-                              ),
+                              Stack(children: [
+                                Icon(
+                                  Icons.playlist_add,
+                                  color: Colors.blue,
+                                  size: 60,
+                                ),
+                                Positioned.fill(
+                                  child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        onTap: () => Navigator.pushNamed(
+                                            context, ChartScreen.routeName),
+                                      )),
+                                ),
+                              ]),
+                              Stack(children: [
+                                Icon(
+                                  Icons.show_chart,
+                                  color: Colors.blue,
+                                  size: 60,
+                                ),
+                                Positioned.fill(
+                                  child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                        onTap: () {
+                                          Route route = MaterialPageRoute(
+                                              builder: (context) => ChartScreen(
+                                                    rangeType: snapshot
+                                                        .data.rangeTypes[index],
+                                                    rangeValues: snapshot
+                                                        .data.rangeValue
+                                                        .map((v) =>
+                                                            BarChartData(
+                                                                v.insertedAt,
+                                                                v.value))
+                                                        .toList(),
+                                                  ));
+                                          Navigator.push(context, route);
+                                        },
+                                      )),
+                                ),
+                              ]),
                             ],
                           ),
                         );

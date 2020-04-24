@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starspat/gui/chart_screen.dart';
 import 'package:starspat/gui/self_assessment_screen.dart';
 import 'package:starspat/model/stars_account.dart';
 //import 'package:starspat/services/service_locator.dart';
@@ -29,6 +30,7 @@ class StarsPatApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           SelfAssessmentScreen.routeName: (context) =>
               SelfAssessmentScreen(account: _account),
+          ChartScreen.routeName: (context) => ChartScreen(),
         });
   }
 }
@@ -142,6 +144,8 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             backgroundColor: Colors.blue,
             icon: Icon(Icons.cached, size: 30),
+            // Το title είναι υποχρεωτικό! Αν το βάλουμε null, πιάνει χώρο!!!
+            // Γι αυτό, χρησιμοποιούμε το παρακάτω τρικ.
             title: SizedBox.shrink(),
           ),
           BottomNavigationBarItem(
