@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:starspat/gui/chart_screen.dart';
-import 'package:starspat/gui/self_assessment_screen.dart';
+import 'package:starspat/screens/chart_screen.dart';
+import 'package:starspat/screens/self_assessment_screen.dart';
 import 'package:starspat/model/stars_account.dart';
 //import 'package:starspat/services/service_locator.dart';
 //import 'package:starspat/services/user_service.dart';
@@ -30,7 +30,7 @@ class StarsPatApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           SelfAssessmentScreen.routeName: (context) =>
               SelfAssessmentScreen(account: _account),
-          ChartScreen.routeName: (context) => ChartScreen(),
+          //ChartScreen.routeName: (context) => ChartScreen(),
         });
   }
 }

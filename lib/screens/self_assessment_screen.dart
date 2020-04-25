@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:starspat/screens/chart_screen.dart';
 import 'package:starspat/model/bar_chart_data.dart';
 import 'package:starspat/model/self_assessment_classes.dart';
@@ -66,6 +67,22 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
     );
   }
 
+  _retRVs(int valueTypeID, List<RangeValue> mixedData) {
+    //final List<BarChartData> data = snapshot.data.rangeValue
+    final List<RangeValue> data =
+        mixedData.where((v) => (v.rangeparamId == valueTypeID)).toList();
+
+    //final List<double> data1 = data.map((v) => v.value);
+    //data.map((v) => BarChartData(v.insertedAt, v.value));
+    return data;
+  }
+
+  // .map((v) {
+  //     var datetime = DateTime.parse(v.insertedAt);
+  //     var formatter = new DateFormat('dd-MM-yyyy HH:mm');
+  //     return BarChartData(formatter.format(datetime), v.value);
+  //   })
+
   Widget _buildSelfAssesmentHome() {
     return FutureBuilder<RangeValueList>(
       future: STARSRestfulClient.apiRangeParamValues(widget.account.profileID),
@@ -132,21 +149,7 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                                       child: InkWell(
                                         borderRadius:
                                             BorderRadius.circular(50.0),
-                                        onTap: () {
-                                          Route route = MaterialPageRoute(
-                                              builder: (context) => ChartScreen(
-                                                    rangeType: snapshot
-                                                        .data.rangeTypes[index],
-                                                    rangeValues: snapshot
-                                                        .data.rangeValue
-                                                        .map((v) =>
-                                                            BarChartData(
-                                                                v.insertedAt,
-                                                                v.value))
-                                                        .toList(),
-                                                  ));
-                                          Navigator.push(context, route);
-                                        },
+                                        onTap: () => {},
                                       )),
                                 ),
                               ]),
@@ -207,6 +210,16 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
       },
     );
   }
+
+  // {
+  //                                         Route route = MaterialPageRoute(
+  //                                             builder: (context) => ChartScreen(
+  //                                                 rangeType: snapshot
+  //                                                     .data.rangeTypes[index],
+  //                                                 rangeValues1: snapshot
+  //                                                     .data.rangeValue));
+  //                                         Navigator.push(context, route);
+  //                                       }
 
   Widget _buildSlider() {
     return Center(
