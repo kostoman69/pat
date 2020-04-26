@@ -5,9 +5,10 @@ import 'package:starspat/model/bar_chart_data.dart';
 import 'package:starspat/model/self_assessment_classes.dart';
 import 'package:starspat/model/stars_account.dart';
 import 'package:starspat/networking/starsclient.dart';
+import 'package:starspat/screens/add_range_value_screen.dart';
+import 'package:starspat/global.dart';
 
 class SelfAssessmentScreen extends StatefulWidget {
-  static String routeName = '/selfAssesment';
   final StarsAccount account;
 
   SelfAssessmentScreen({key, @required this.account}) : super(key: key);
@@ -17,8 +18,6 @@ class SelfAssessmentScreen extends StatefulWidget {
 }
 
 class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
-  double _value = 6;
-
   // @override
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
@@ -34,7 +33,7 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: _buildSelfAssesmentHome(),
+      body: _buildSelfAssesmentBoby(),
     );
   }
 
@@ -51,7 +50,7 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
       children: <Widget>[
         //SizedBox(width: 1),
         Text(
-          "SELF ASSESEMENT",
+          "Self Assesement",
           style: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -83,7 +82,7 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
   //     return BarChartData(formatter.format(datetime), v.value);
   //   })
 
-  Widget _buildSelfAssesmentHome() {
+  Widget _buildSelfAssesmentBoby() {
     return FutureBuilder<RangeValueList>(
       future: STARSRestfulClient.apiRangeParamValues(widget.account.profileID),
       builder: (BuildContext context, AsyncSnapshot<RangeValueList> snapshot) {
@@ -128,13 +127,15 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                                 ),
                                 Positioned.fill(
                                   child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
+                                    color: Colors.transparent,
+                                    child: InkWell(
                                         borderRadius:
                                             BorderRadius.circular(50.0),
                                         onTap: () => Navigator.pushNamed(
-                                            context, ChartScreen.routeName),
-                                      )),
+                                            context, addRangeValueScreenRoute,
+                                            arguments: snapshot
+                                                .data.rangeTypes[index])),
+                                  ),
                                 ),
                               ]),
                               Stack(children: [
@@ -149,7 +150,26 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                                       child: InkWell(
                                         borderRadius:
                                             BorderRadius.circular(50.0),
-                                        onTap: () => {},
+                                        onTap: () => Navigator.pushNamed(
+                                            context, chartScreenRoute,
+                                            arguments: <String, dynamic>{
+                                              'type': snapshot
+                                                  .data.rangeTypes[index],
+                                              'value': snapshot.data.rangeValue
+                                                  .where((v) =>
+                                                      v.rangeparamId ==
+                                                      snapshot.data
+                                                          .rangeTypes[index].id)
+                                                  .map((v) {
+                                                var datetime = DateTime.parse(
+                                                    v.insertedAt);
+                                                var formatter = new DateFormat(
+                                                    'dd-MM-yyyy HH:mm');
+                                                BarChartData(
+                                                    formatter.format(datetime),
+                                                    v.value);
+                                              }).toList()
+                                            }),
                                       )),
                                 ),
                               ]),
@@ -158,7 +178,6 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                         );
                       }),
                 ),
-                _buildSlider()
               ],
             ),
           );
@@ -221,59 +240,4 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
   //                                         Navigator.push(context, route);
   //                                       }
 
-  Widget _buildSlider() {
-    return Center(
-      child: RotatedBox(
-        quarterTurns: 1,
-        child: SizedBox(
-          width: 300.0,
-          height: 50.0,
-          child: Container(
-            color: Colors.transparent,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: new LinearGradient(
-                  colors: [Colors.red, Colors.cyan],
-                ),
-                borderRadius: new BorderRadius.all(const Radius.circular(40.0)),
-              ),
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: Colors.transparent,
-                  inactiveTrackColor: Colors.transparent,
-                  trackShape: RoundedRectSliderTrackShape(),
-                  trackHeight: 4.0,
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                  thumbColor: Colors.redAccent,
-                  overlayColor: Colors.white,
-                  //Colors.red.withAlpha(32),
-                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                  tickMarkShape: RoundSliderTickMarkShape(),
-                  activeTickMarkColor: Colors.red[700],
-                  inactiveTickMarkColor: Colors.red[100],
-                  valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                  valueIndicatorColor: Colors.redAccent,
-                  valueIndicatorTextStyle: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                child: Slider(
-                  min: 0,
-                  max: 100,
-                  divisions: 10,
-                  value: _value,
-                  label: _value.toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      _value = value;
-                    });
-                  },
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

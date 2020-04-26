@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:starspat/cst_chart_horizontal_bar_label_custom.dart';
+import 'package:starspat/cst_chart_initial_hint_animation.dart';
+import 'package:starspat/cst_chart_simple_barchart.dart';
+import 'package:starspat/cst_chart_simple_scatter_plot.dart';
 import 'package:starspat/model/bar_chart_data.dart';
-import 'package:starspat/model/self_assessment_classes.dart';
-import 'package:starspat/screens/horizontal_bar_label_custom.dart';
-import 'dart:math';
-
-import 'package:starspat/screens/simple_barchart.dart';
-import 'package:starspat/screens/simple_scatter_plot.dart';
-
-import 'initial_hint_animation.dart';
 
 class OrdinalSales {
   final String year;
@@ -19,14 +15,6 @@ class OrdinalSales {
 }
 
 class ChartScreen extends StatefulWidget {
-  static String routeName = '/chart';
-  final RangeParams rangeType;
-  final List<BarChartData> rangeValues = null;
-  final List<RangeValue> rangeValues1;
-
-  ChartScreen({key, @required this.rangeType, @required this.rangeValues1})
-      : super(key: key);
-
   @override
   _ChartScreenState createState() => _ChartScreenState();
 }
@@ -36,9 +24,11 @@ class _ChartScreenState extends State<ChartScreen> {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [Text('Chart Viewer')],
   );
+
   List<BarChartData> fakeData;
   int chartBarSelector;
   String chartType;
+  Map _args;
 
   @override
   void didChangeDependencies() {
@@ -60,68 +50,184 @@ class _ChartScreenState extends State<ChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Charts in Flutter'),
+    _args = ModalRoute.of(context).settings.arguments as Map;
+    if (_args == null) {
+      /*--------
+       ΠΡΟΒΛΗΜΑ: Κανονικά δε θα πρέπει να συμβεί ΠΟΤΕ!
+       Αυτός που καλεί το ChartScreen το καλεί ως:
+        args = {
+                'type': RangeParams,
+                'value': List<BarChartData>
+               }
+       οπότε πάντα θα έχει τιμή. Να δω κάποια στιγμή το error handling
+      π.χ. δεν υπάρχουν data!
+      ---------------*/
+      print('FATAL!!!');
+    }
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: _buildChartBoby(context),
+    );
+  }
+
+// @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: _buildAppBar(context),
+//         body: _buildChartBoby(context),
+//       ),
+//     );
+//   }
+
+  AppBar _buildAppBar(BuildContext context) {
+    final mainMenuBtn = IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    final appBartitle = Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        //SizedBox(width: 1),
+        Text(
+          "Chart",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
+      ],
+    );
+
+    return AppBar(
+      leading: mainMenuBtn,
+      title: appBartitle,
+      elevation: 10,
+    );
+  }
+
+  Widget _buildChartBoby(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 250,
+            child: chartContainer,
+          ),
+          SizedBox(
+            height: 100.0,
+          ),
+          Text(chartType),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Container(
-                height: 250,
-                child: chartContainer,
-              ),
-              SizedBox(
-                height: 100.0,
-              ),
-              Text(chartType),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text('Chart switching'),
-                    onPressed: () {
-                      setState(() {
-                        switch (chartBarSelector) {
-                          case 1:
-                            chartContainer =
-                                SimpleBarChart2.withSampleData(animate: true);
-                            chartBarSelector = 2;
-                            chartType = "SimpleBarChart";
-                            break;
-                          case 2:
-                            chartContainer =
-                                HorizontalBarLabelCustomChart.withRandomData();
-                            chartBarSelector = 3;
-                            chartType = "HorizontalBarLabelCustomChart";
-                            break;
-                          case 3:
-                            chartContainer =
-                                SimpleScatterPlotChart.withRandomData();
-                            chartBarSelector = 4;
-                            chartType = "SimpleScatterPlotChart";
-                            break;
-                          case 4:
-                            chartContainer = InitialHintAnimation2.withRealData(
-                              data: widget.rangeValues,
-                              animate: true,
+              RaisedButton(
+                child: Text('Chart switching'),
+                onPressed: () {
+                  setState(() {
+                    switch (chartBarSelector) {
+                      case 1:
+                        chartContainer =
+                            SimpleBarChart2.withSampleData(animate: true);
+                        chartBarSelector = 2;
+                        chartType = "SimpleBarChart";
+                        break;
+                      case 2:
+                        chartContainer =
+                            HorizontalBarLabelCustomChart.withRandomData();
+                        chartBarSelector = 3;
+                        chartType = "HorizontalBarLabelCustomChart";
+                        break;
+                      case 3:
+                        chartContainer =
+                            SimpleScatterPlotChart.withRandomData();
+                        chartBarSelector = 4;
+                        chartType = "SimpleScatterPlotChart";
+                        break;
+                      case 4:
+                        chartContainer = InitialHintAnimation.withRandomData(
+                            //data: widget.rangeValues,
+                            //animate: true,
                             );
-                            chartBarSelector = 1;
-                            chartType = "InitialHintAnimation";
-                            break;
-                        }
-                      });
-                    },
-                  ),
-                ],
+                        chartBarSelector = 1;
+                        chartType = "InitialHintAnimation";
+                        break;
+                    }
+                  });
+                },
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     home: Scaffold(
+  //       appBar: _buildAppBar(),
+  //       body: SingleChildScrollView(
+  //         child: Column(
+  //           children: <Widget>[
+  //             Container(
+  //               height: 250,
+  //               child: chartContainer,
+  //             ),
+  //             SizedBox(
+  //               height: 100.0,
+  //             ),
+  //             Text(chartType),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: <Widget>[
+  //                 RaisedButton(
+  //                   child: Text('Chart switching'),
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       switch (chartBarSelector) {
+  //                         case 1:
+  //                           chartContainer =
+  //                               SimpleBarChart2.withSampleData(animate: true);
+  //                           chartBarSelector = 2;
+  //                           chartType = "SimpleBarChart";
+  //                           break;
+  //                         case 2:
+  //                           chartContainer =
+  //                               HorizontalBarLabelCustomChart.withRandomData();
+  //                           chartBarSelector = 3;
+  //                           chartType = "HorizontalBarLabelCustomChart";
+  //                           break;
+  //                         case 3:
+  //                           chartContainer =
+  //                               SimpleScatterPlotChart.withRandomData();
+  //                           chartBarSelector = 4;
+  //                           chartType = "SimpleScatterPlotChart";
+  //                           break;
+  //                         case 4:
+  //                           chartContainer =
+  //                               InitialHintAnimation.withRandomData(
+  //                                   //data: widget.rangeValues,
+  //                                   //animate: true,
+  //                                   );
+  //                           chartBarSelector = 1;
+  //                           chartType = "InitialHintAnimation";
+  //                           break;
+  //                       }
+  //                     });
+  //                   },
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // SingleChildScrollView(
   //         child: Column(
@@ -148,7 +254,7 @@ class _ChartScreenState extends State<ChartScreen> {
   }
 
   List<charts.Series<BarChartData, String>> _createData() {
-    widget.rangeValues
+    _args['value']
         .forEach((v) => print(v.value.toString() + ' at ' + v.datetime));
     return [
       new charts.Series<BarChartData, String>(
