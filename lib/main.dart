@@ -20,8 +20,7 @@ class StarsPatApp extends StatelessWidget {
       home: SafeArea(child: LoginScreen()),
       onGenerateRoute: router.generateRoute,
       routes: <String, WidgetBuilder>{
-        //   SelfAssessmentScreen.routeName: (context) =>
-        //       SelfAssessmentScreen(account: _debugAccount),
+        // SelfAssessmentScreen.routeName: (context) => SelfAssessmentScreen(account: _debugAccount),
         chartScreenRoute: (context) => ChartScreen(),
       },
     );

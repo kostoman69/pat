@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:starspat/screens/chart_screen.dart';
 import 'package:starspat/model/bar_chart_data.dart';
 import 'package:starspat/model/self_assessment_classes.dart';
 import 'package:starspat/model/stars_account.dart';
 import 'package:starspat/networking/starsclient.dart';
-import 'package:starspat/screens/add_range_value_screen.dart';
 import 'package:starspat/global.dart';
 
 class SelfAssessmentScreen extends StatefulWidget {
@@ -18,17 +16,6 @@ class SelfAssessmentScreen extends StatefulWidget {
 }
 
 class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   STARSRestfulClient.apiRangeParamValues(widget.account.profileID)
-  //       .then((rangeParamValues) {
-  //     print(rangeParamValues.rangeParamValue.length);
-  //   }).catchError((err) {
-  //     print(err);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,22 +52,6 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
       elevation: 10,
     );
   }
-
-  _retRVs(int valueTypeID, List<RangeValue> mixedData) {
-    //final List<BarChartData> data = snapshot.data.rangeValue
-    final List<RangeValue> data =
-        mixedData.where((v) => (v.rangeparamId == valueTypeID)).toList();
-
-    //final List<double> data1 = data.map((v) => v.value);
-    //data.map((v) => BarChartData(v.insertedAt, v.value));
-    return data;
-  }
-
-  // .map((v) {
-  //     var datetime = DateTime.parse(v.insertedAt);
-  //     var formatter = new DateFormat('dd-MM-yyyy HH:mm');
-  //     return BarChartData(formatter.format(datetime), v.value);
-  //   })
 
   Widget _buildSelfAssesmentBoby() {
     return FutureBuilder<RangeValueList>(
@@ -129,12 +100,8 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                        onTap: () => Navigator.pushNamed(
-                                            context, addRangeValueScreenRoute,
-                                            arguments: snapshot
-                                                .data.rangeTypes[index])),
+                                        borderRadius: BorderRadius.circular(50.0),
+                                        onTap: () => Navigator.pushNamed(context, addRangeValueScreenRoute, arguments: snapshot.data.rangeTypes[index])),
                                   ),
                                 ),
                               ]),
@@ -148,29 +115,25 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
                                   child: Material(
                                       color: Colors.transparent,
                                       child: InkWell(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                        onTap: () => Navigator.pushNamed(
-                                            context, chartScreenRoute,
-                                            arguments: <String, dynamic>{
-                                              'type': snapshot
-                                                  .data.rangeTypes[index],
+                                          borderRadius: BorderRadius.circular(50.0),
+                                          onTap: () {
+                                            List<BarChartData> ll = snapshot.data.rangeValue
+                                                .where((v) => v.rangeparamId == snapshot.data.rangeTypes[index].id)
+                                                .toList()
+                                                .map((v) => BarChartData(DateFormat('dd-MM-yyyy HH:mm').format(DateTime.parse(v.insertedAt)), v.value))
+                                                .toList();
+
+                                            ll.forEach((e) => print(e));
+
+                                            Navigator.pushNamed(context, chartScreenRoute, arguments: <String, dynamic>{
+                                              'type': snapshot.data.rangeTypes[index],
                                               'value': snapshot.data.rangeValue
-                                                  .where((v) =>
-                                                      v.rangeparamId ==
-                                                      snapshot.data
-                                                          .rangeTypes[index].id)
-                                                  .map((v) {
-                                                var datetime = DateTime.parse(
-                                                    v.insertedAt);
-                                                var formatter = new DateFormat(
-                                                    'dd-MM-yyyy HH:mm');
-                                                BarChartData(
-                                                    formatter.format(datetime),
-                                                    v.value);
-                                              }).toList()
-                                            }),
-                                      )),
+                                                  .where((v) => v.rangeparamId == snapshot.data.rangeTypes[index].id)
+                                                  .toList()
+                                                  .map((v) => BarChartData(DateFormat('dd-MM-yyyy HH:mm').format(DateTime.parse(v.insertedAt)), v.value))
+                                                  .toList()
+                                            });
+                                          })),
                                 ),
                               ]),
                             ],
@@ -219,25 +182,7 @@ class _SelfAssessmentScreenState extends State<SelfAssessmentScreen> {
           );
         }
         return child;
-        // Center(
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.center,
-        //     crossAxisAlignment: CrossAxisAlignment.center,
-        //     children: children,
-        //   ),
-        // );
       },
     );
   }
-
-  // {
-  //                                         Route route = MaterialPageRoute(
-  //                                             builder: (context) => ChartScreen(
-  //                                                 rangeType: snapshot
-  //                                                     .data.rangeTypes[index],
-  //                                                 rangeValues1: snapshot
-  //                                                     .data.rangeValue));
-  //                                         Navigator.push(context, route);
-  //                                       }
-
 }

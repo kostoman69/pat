@@ -203,10 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   accountName: Text(widget.account.accountFullname),
                   accountEmail: Text(widget.account.accountEmail),
                   currentAccountPicture: CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).platform == TargetPlatform.iOS
-                            ? Colors.blue
-                            : Colors.white,
+                    backgroundColor: Theme.of(context).platform == TargetPlatform.iOS ? Colors.blue : Colors.white,
                     child: Text(
                       "J",
                       style: TextStyle(fontSize: 40.0),
@@ -232,8 +229,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     //trailing: _gotoScreen("Self-assesment"),
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, selfAssessmentScreenRoute,
-                          arguments: widget.account);
+                      Navigator.pushNamed(context, selfAssessmentScreenRoute, arguments: widget.account);
                     }),
                 ListTile(
                   //leading: Icon(Icons.question_answer),
@@ -292,13 +288,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             elevation: 15,
             margin: EdgeInsets.symmetric(horizontal: 35.0, vertical: 6.0),
             child: Container(
-              decoration: BoxDecoration(
-                  color: widget.dashboardData[index]['cardColor']),
+              decoration: BoxDecoration(color: widget.dashboardData[index]['cardColor']),
               child: Row(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(
-                        right: 12.0, left: 12.0, top: 10, bottom: 10.0),
+                    padding: EdgeInsets.only(right: 12.0, left: 12.0, top: 10, bottom: 10.0),
                     decoration: BoxDecoration(
                       color: widget.dashboardData[index]['iconColor'],
                       border: Border(
@@ -340,9 +334,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   //   onTap: () {
                   //   print('pressed $index');
                   // }),
-                  onTap: () => Navigator.pushNamed(
-                      context, widget.dashboardData[index]['route'],
-                      arguments: widget.account),
+                  onTap: () => Navigator.pushNamed(context, widget.dashboardData[index]['route'], arguments: widget.account),
                 )),
           ),
         ]);

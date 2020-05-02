@@ -14,7 +14,6 @@ class AddRangeValueScreen extends StatefulWidget {
 
 class _AddRangeValueScreenState extends State<AddRangeValueScreen> {
   double _currentValue;
-  SliderThemeData _myTheme;
 
   @override
   void initState() {
@@ -25,46 +24,6 @@ class _AddRangeValueScreenState extends State<AddRangeValueScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _myTheme = SliderTheme.of(context).copyWith(
-      //--------------- TRACK PROPERTIES
-      //activeTrackColor: Colors.transparent,
-      activeTrackColor: Colors.transparent,
-      inactiveTrackColor: Colors.transparent,
-      trackShape: RoundedRectSliderTrackShape(),
-      //RectangularSliderTrackShape(),
-      //RoundedRectSliderTrackShape(),
-      trackHeight: 3.0,
-      // Αν trackHeight <= 7.0, τα TickMarkers φαίνονται [για TickMarkers τύπου RoundSliderTickMarkShape()]
-      // Αν trackHeight > 7.0, τα TickMarkers φαίνονται !!!
-      // Στην περίπτωση αυτή να δοκιμάσουμε άλλου τύπου TickMarkers (π.χ. CustomTickMarkers)
-      // Από μία μικρή έρευνα που έκανα μάλλον δεν υπάρχουν άλλοι Implementers της SliderTickMarkShape class
-      // παρά μόνο η RoundSliderTickMarkShape.
-      // Επομένως, αν θέλουμε κάτι διαφορερικό, πρέπει να το υλοποιήσουμε. Δηλαδή πρέπει να κάνουμε
-      // custom TickMarker that implemets SliderTickMarkShape class.
-      //--------------- TICKmARK PROPERTIES
-      tickMarkShape: RoundSliderTickMarkShape(),
-      activeTickMarkColor: Colors.red[700],
-      inactiveTickMarkColor: Colors.red[100],
-      //--------------- THUMB PROPERTIES
-      thumbShape: CustomSliderThumbCircle(
-        thumbRadius: 22.0,
-        min: 0,
-        max: 100,
-      ),
-      //RoundSliderThumbShape(enabledThumbRadius: 12.0),
-      thumbColor: Colors.redAccent,
-      //--------------- OVERLAY PROPERTIES
-      // must use an implementer of SliderComponentShape class
-      overlayShape: SliderComponentShape.noOverlay,
-      //overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-      //--------------- VALUEiNDICATOR PROPERTIES
-      //valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-      //valueIndicatorColor: Colors.redAccent,
-      //valueIndicatorTextStyle: TextStyle(
-      //  color: Colors.white,
-      //),
-    );
-
     return Scaffold(
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
@@ -73,12 +32,11 @@ class _AddRangeValueScreenState extends State<AddRangeValueScreen> {
             SizedBox(
               height: 100.0,
             ),
-            Text(widget.rangeType.name + ' assessment',
-                style: TextStyle(fontSize: 22.0)),
+            Text(widget.rangeType.name + ' assessment', style: TextStyle(fontSize: 22.0)),
             SizedBox(
               height: 80.0,
             ),
-            _buildSlider(),
+            _buildCustomSlider(),
             SizedBox(
               height: 150.0,
             ),
@@ -97,11 +55,7 @@ class _AddRangeValueScreenState extends State<AddRangeValueScreen> {
                         //minWidth: MediaQuery.of(context).size.width,
                         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                         onPressed: () => Navigator.pop(context),
-                        child: Text("Cancel",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
+                        child: Text("Cancel", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ),
@@ -118,11 +72,7 @@ class _AddRangeValueScreenState extends State<AddRangeValueScreen> {
                         //minWidth: MediaQuery.of(context).size.width,
                         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                         onPressed: () => _showDialog(),
-                        child: Text("Insert Value",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
+                        child: Text("Insert Value", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ),
@@ -164,48 +114,89 @@ class _AddRangeValueScreenState extends State<AddRangeValueScreen> {
     );
   }
 
+  Widget _buildCustomSlider() {
+    return Center(
+      child: SliderWidget(min: widget.rangeType.valueFrom.toInt(), max: widget.rangeType.valueUntil.toInt() + 20, sliderHeight: 50, fullWidth: false),
+    );
+  }
+
   Widget _buildSlider() {
     return Center(
       //child: RotatedBox(
       //  quarterTurns: 1,
-      child: SliderWidget(
-          min: widget.rangeType.valueFrom.toInt(),
-          max: widget.rangeType.valueUntil.toInt(),
-          sliderHeight: 50,
-          fullWidth: false),
-      // SizedBox(
-      //   width: 300.0,
-      //   height: 65.0,
-      //   child: Container(
-      //     color: Colors.transparent,
-      //     child: Container(
-      //       decoration: BoxDecoration(
-      //         gradient: new LinearGradient(
-      //           colors: [Colors.cyan, Colors.red],
-      //         ),
-      //         borderRadius: new BorderRadius.all(const Radius.circular(22.0)),
-      //       ),
-      //       child: SliderTheme(
-      //         data: _myTheme,
-      //         child: Slider(
-      //           min: widget.rangeType.valueFrom,
-      //           max: widget.rangeType.valueUntil,
-      //           divisions: (widget.rangeType.valueUntil -
-      //                   widget.rangeType.valueFrom) ~/
-      //               10.0,
-      //           value: _currentValue,
-      //           label: _currentValue.toString(),
-      //           onChanged: (value) {
-      //             setState(() {
-      //               _currentValue = value;
-      //             });
-      //           },
-      //         ),
-      //       ),
-
-      //     ),
-      //   ),
-      // ),
+      child: SizedBox(
+        width: 300.0,
+        height: 65.0,
+        child: Container(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: new LinearGradient(
+                colors: [
+                  Colors.cyan,
+                  Colors.red,
+                ],
+              ),
+              borderRadius: new BorderRadius.all(const Radius.circular(22.0)),
+            ),
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                //--------------- TRACK PROPERTIES
+                //activeTrackColor: Colors.transparent,
+                activeTrackColor: Colors.transparent,
+                inactiveTrackColor: Colors.transparent,
+                trackShape: RoundedRectSliderTrackShape(),
+                //RectangularSliderTrackShape(),
+                //RoundedRectSliderTrackShape(),
+                trackHeight: 3.0,
+                // Αν trackHeight <= 7.0, τα TickMarkers φαίνονται [για TickMarkers τύπου RoundSliderTickMarkShape()]
+                // Αν trackHeight > 7.0, τα TickMarkers φαίνονται !!!
+                // Στην περίπτωση αυτή να δοκιμάσουμε άλλου τύπου TickMarkers (π.χ. CustomTickMarkers)
+                // Από μία μικρή έρευνα που έκανα μάλλον δεν υπάρχουν άλλοι Implementers της SliderTickMarkShape class
+                // παρά μόνο η RoundSliderTickMarkShape.
+                // Επομένως, αν θέλουμε κάτι διαφορερικό, πρέπει να το υλοποιήσουμε. Δηλαδή πρέπει να κάνουμε
+                // custom TickMarker that implemets SliderTickMarkShape class.
+                //--------------- TICKmARK PROPERTIES
+                tickMarkShape: RoundSliderTickMarkShape(),
+                activeTickMarkColor: Colors.red[700],
+                inactiveTickMarkColor: Colors.red[100],
+                //--------------- THUMB PROPERTIES
+                thumbShape: CustomSliderThumbCircle(
+                  thumbRadius: 22.0,
+                  min: 0,
+                  max: 100,
+                ),
+                //RoundSliderThumbShape(enabledThumbRadius: 12.0),
+                thumbColor: Colors.redAccent,
+                //--------------- OVERLAY PROPERTIES
+                // must use an implementer of SliderComponentShape class
+                overlayColor: Colors.red, //Colors.white.withOpacity(.4),
+                //overlayShape: RoundSliderOverlayShape(overlayRadius: 38.0),
+                overlayShape: SliderComponentShape.noOverlay,
+                //--------------- VALUEiNDICATOR PROPERTIES
+                //valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+                valueIndicatorShape: SliderComponentShape.noOverlay,
+                valueIndicatorColor: Colors.redAccent,
+                valueIndicatorTextStyle: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+              child: Slider(
+                min: widget.rangeType.valueFrom,
+                max: widget.rangeType.valueUntil,
+                divisions: (widget.rangeType.valueUntil - widget.rangeType.valueFrom) ~/ 10.0,
+                value: _currentValue,
+                label: _currentValue.toString(),
+                onChanged: (value) {
+                  setState(() {
+                    _currentValue = value;
+                  });
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -280,13 +271,9 @@ class CustomSliderThumbCircle extends SliderComponentShape {
       text: getValue(value),
     );
 
-    TextPainter tp = new TextPainter(
-        text: span,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr);
+    TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.center, textDirection: TextDirection.ltr);
     tp.layout();
-    Offset textCenter =
-        Offset(center.dx - (tp.width / 2), center.dy - (tp.height / 2));
+    Offset textCenter = Offset(center.dx - (tp.width / 2), center.dy - (tp.height / 2));
 
     canvas.drawCircle(center, thumbRadius * .9, paint);
     tp.paint(canvas, textCenter);
@@ -331,8 +318,7 @@ class CustomSliderThumbRect extends SliderComponentShape {
     final Canvas canvas = context.canvas;
 
     final rRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(
-          center: center, width: thumbHeight * 1.2, height: thumbHeight * .6),
+      Rect.fromCenter(center: center, width: thumbHeight * 1.2, height: thumbHeight * .6),
       Radius.circular(thumbRadius * .4),
     );
 
@@ -340,20 +326,11 @@ class CustomSliderThumbRect extends SliderComponentShape {
       ..color = Colors.white
       ..style = PaintingStyle.fill;
 
-    TextSpan span = new TextSpan(
-        style: new TextStyle(
-            fontSize: thumbHeight * .3,
-            fontWeight: FontWeight.w700,
-            color: sliderTheme.thumbColor,
-            height: 0.9),
-        text: '${getValue(value)}');
-    TextPainter tp = new TextPainter(
-        text: span,
-        textAlign: TextAlign.left,
-        textDirection: TextDirection.ltr);
+    TextSpan span =
+        new TextSpan(style: new TextStyle(fontSize: thumbHeight * .3, fontWeight: FontWeight.w700, color: sliderTheme.thumbColor, height: 0.9), text: '${getValue(value)}');
+    TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.left, textDirection: TextDirection.ltr);
     tp.layout();
-    Offset textCenter =
-        Offset(center.dx - (tp.width / 2), center.dy - (tp.height / 2));
+    Offset textCenter = Offset(center.dx - (tp.width / 2), center.dy - (tp.height / 2));
 
     canvas.drawRRect(rRect, paint);
     tp.paint(canvas, textCenter);

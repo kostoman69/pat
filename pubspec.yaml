@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   http: any
   charts_flutter: ^0.7.0
+  charts_common: any
   # Θα χρησιμοποιήσω τα packages
   shared_preferences: ^0.5.7
   # dependency injection

@@ -1,23 +1,4 @@
-// Copyright 2018 the Charts project authors. Please see the AUTHORS file
-// for details.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-/// Horizontal bar chart with custom style for each datum in the bar label.
-// EXCLUDE_FROM_GALLERY_DOCS_START
-import 'dart:math';
 import 'package:intl/intl.dart';
-// EXCLUDE_FROM_GALLERY_DOCS_END
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:starspat/model/bar_chart_data.dart';
@@ -28,60 +9,13 @@ class HorizontalBarLabelCustomChart extends StatelessWidget {
 
   HorizontalBarLabelCustomChart(this.seriesList, {this.animate});
 
-  /// Creates a [BarChart] with sample data and no transition.
-  static HorizontalBarLabelCustomChart createWithSampleData() {
+  factory HorizontalBarLabelCustomChart.withData(List<BarChartData> data,
+      {animate}) {
     return new HorizontalBarLabelCustomChart(
-      _createSampleData(),
-      // Disable animations for image tests.
-      animate: false,
+      _createData(data),
+      animate: animate,
     );
   }
-
-  // EXCLUDE_FROM_GALLERY_DOCS_START
-  // This section is excluded from being copied to the gallery.
-  // It is used for creating random series data to demonstrate animation in
-  // the example app only.
-  factory HorizontalBarLabelCustomChart.withRandomData() {
-    return new HorizontalBarLabelCustomChart(_createRandomData());
-  }
-
-  /// Create random data.
-  static List<charts.Series<OrdinalSales, String>> _createRandomData() {
-    final random = new Random();
-
-    final data = [
-      new OrdinalSales('2014', random.nextInt(100)),
-      new OrdinalSales('2015', random.nextInt(100)),
-      new OrdinalSales('2016', random.nextInt(100)),
-      new OrdinalSales('2017', random.nextInt(100)),
-    ];
-
-    return [
-      new charts.Series<OrdinalSales, String>(
-        id: 'Sales',
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: data,
-        // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (OrdinalSales sales, _) =>
-            '${sales.year}: \$${sales.sales.toString()}',
-        insideLabelStyleAccessorFn: (OrdinalSales sales, _) {
-          final color = (sales.year == '2014')
-              ? charts.MaterialPalette.red.shadeDefault
-              : charts.MaterialPalette.yellow.shadeDefault.darker;
-          return new charts.TextStyleSpec(color: color);
-        },
-        outsideLabelStyleAccessorFn: (OrdinalSales sales, _) {
-          final color = (sales.year == '2014')
-              ? charts.MaterialPalette.red.shadeDefault
-              : charts.MaterialPalette.yellow.shadeDefault.darker;
-          return new charts.TextStyleSpec(color: color);
-        },
-      ),
-    ];
-  }
-  // EXCLUDE_FROM_GALLERY_DOCS_END
-
   // The [BarLabelDecorator] has settings to set the text style for all labels
   // for inside the bar and outside the bar. To be able to control each datum's
   // style, set the style accessor functions on the series.
@@ -98,107 +32,17 @@ class HorizontalBarLabelCustomChart extends StatelessWidget {
     );
   }
 
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<OrdinalSales, String>> _createSampleData() {
-    final data = [
-      new OrdinalSales('2014', 5),
-      new OrdinalSales('2015', 25),
-      new OrdinalSales('2016', 100),
-      new OrdinalSales('2017', 75),
-    ];
-
-    return [
-      new charts.Series<OrdinalSales, String>(
-        id: 'Sales',
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: data,
-        // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (OrdinalSales sales, _) =>
-            '${sales.year}: \$${sales.sales.toString()}',
-        insideLabelStyleAccessorFn: (OrdinalSales sales, _) {
-          final color = (sales.year == '2014')
-              ? charts.MaterialPalette.red.shadeDefault
-              : charts.MaterialPalette.yellow.shadeDefault.darker;
-          return new charts.TextStyleSpec(color: color);
-        },
-        outsideLabelStyleAccessorFn: (OrdinalSales sales, _) {
-          final color = (sales.year == '2014')
-              ? charts.MaterialPalette.red.shadeDefault
-              : charts.MaterialPalette.yellow.shadeDefault.darker;
-          return new charts.TextStyleSpec(color: color);
-        },
-      ),
-    ];
-  }
-}
-
-/// Sample ordinal data type.
-class OrdinalSales {
-  final String year;
-  final int sales;
-
-  OrdinalSales(this.year, this.sales);
-}
-
-class HorizontalBarLabelCustomChart2 extends StatelessWidget {
-  final List<charts.Series> seriesList;
-  final bool animate;
-
-  HorizontalBarLabelCustomChart2(this.seriesList, {this.animate});
-
-  /// Creates a [BarChart] with sample data and no transition.
-  factory HorizontalBarLabelCustomChart2.withSampleData({animate}) {
-    return HorizontalBarLabelCustomChart2(
-      _createSampleData(),
-      animate: animate,
-    );
-  }
-
-  factory HorizontalBarLabelCustomChart2.withRandomData({animate}) {
-    return HorizontalBarLabelCustomChart2(
-      _createRandomData(),
-      animate: animate,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new charts.BarChart(
-      seriesList,
-      animate: animate,
-      vertical: false,
-      barRendererDecorator: new charts.BarLabelDecorator<String>(),
-      // Hide domain axis.
-      domainAxis:
-          new charts.OrdinalAxisSpec(renderSpec: new charts.NoneRenderSpec()),
-    );
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<BarChartData, String>> _createSampleData() {
-    final data = [
-      new BarChartData('2014', 5),
-      new BarChartData('2015', 25),
-      new BarChartData('2016', 100),
-      new BarChartData('2017', 75),
-    ];
-
+  static List<charts.Series<BarChartData, String>> _createData(
+      List<BarChartData> data) {
     return [
       new charts.Series<BarChartData, String>(
         id: 'RangeParamChart',
-
         domainFn: (BarChartData rv, _) => rv.datetime,
         measureFn: (BarChartData rv, _) => rv.value,
-        //data: widget.rangeValues,
         data: data,
         // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (BarChartData rv, _) {
-          var datetime = DateTime.parse(rv.datetime);
-          var formatter = new DateFormat('dd-MM-yyyy HH:mm');
-
-          return '${formatter.format(datetime)} | ${rv.value.toString()}';
-        },
+        labelAccessorFn: (BarChartData rv, lbl) =>
+            '${rv.datetime} | ${rv.value.toString()}',
         insideLabelStyleAccessorFn: (BarChartData rv, _) {
           final color = (rv.value > 50)
               ? charts.MaterialPalette.red.shadeDefault
@@ -206,48 +50,7 @@ class HorizontalBarLabelCustomChart2 extends StatelessWidget {
           return new charts.TextStyleSpec(color: color);
         },
         outsideLabelStyleAccessorFn: (BarChartData rv, _) {
-          final color = (rv.value > 50)
-              ? charts.MaterialPalette.red.shadeDefault
-              : charts.MaterialPalette.white;
-          return new charts.TextStyleSpec(color: color);
-        },
-      )
-    ];
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<BarChartData, String>> _createRandomData() {
-    final random = new Random();
-
-    final data = [
-      new BarChartData('2014', random.nextInt(100).toDouble()),
-      new BarChartData('2015', random.nextInt(100).toDouble()),
-      new BarChartData('2016', random.nextInt(100).toDouble()),
-      new BarChartData('2017', random.nextInt(100).toDouble()),
-    ];
-
-    return [
-      new charts.Series<BarChartData, String>(
-        id: 'RangeParamChart',
-        domainFn: (BarChartData rv, _) => rv.datetime,
-        measureFn: (BarChartData rv, _) => rv.value,
-        //data: widget.rangeValues,
-        data: data,
-        // Set a label accessor to control the text of the bar label.
-        labelAccessorFn: (BarChartData rv, _) {
-          var datetime = DateTime.parse(rv.datetime);
-          var formatter = new DateFormat('dd-MM-yyyy HH:mm');
-
-          return '${formatter.format(datetime)} | ${rv.value.toString()}';
-        },
-        insideLabelStyleAccessorFn: (BarChartData rv, _) {
-          final color = (rv.value > 50)
-              ? charts.MaterialPalette.red.shadeDefault
-              : charts.MaterialPalette.white;
-          return new charts.TextStyleSpec(color: color);
-        },
-        outsideLabelStyleAccessorFn: (BarChartData rv, _) {
-          final color = (rv.value > 50)
+          final color = (rv.value < 50)
               ? charts.MaterialPalette.red.shadeDefault
               : charts.MaterialPalette.white;
           return new charts.TextStyleSpec(color: color);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starspat/cst_slider_thumb_circle.dart';
+import 'package:starspat/cst_slider_thumb_rect.dart';
 
 class SliderWidget extends StatefulWidget {
   final double sliderHeight;
@@ -39,6 +40,8 @@ class _SliderWidgetState extends State<SliderWidget> {
             colors: [
               const Color(0xFF00c6ff),
               const Color(0xFF0072ff),
+              // Colors.cyan,
+              // Colors.red,
             ],
             begin: const FractionalOffset(0.0, 0.0),
             end: const FractionalOffset(1.0, 1.00),

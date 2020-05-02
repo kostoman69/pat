@@ -4,6 +4,8 @@ class StarsAccount {
   String accountEmail;
   int recordID;
   int profileID;
+  bool valid;
+  String errDescription;
 
   StarsAccount(
       {this.accountID,

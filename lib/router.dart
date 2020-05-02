@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starspat/global.dart';
 import 'package:starspat/screens/add_range_value_screen.dart';
-import 'package:starspat/screens/chart_screen.dart';
 import 'package:starspat/screens/dashboard_screen.dart';
 import 'package:starspat/screens/self_assessment_screen.dart';
 
@@ -9,16 +8,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case dashboardScreenRoute:
       var arg = settings.arguments;
-      return MaterialPageRoute(
-          builder: (context) => DashboardScreen(account: arg));
+      return MaterialPageRoute(builder: (context) => DashboardScreen(account: arg));
     case selfAssessmentScreenRoute:
       var arg = settings.arguments;
-      return MaterialPageRoute(
-          builder: (context) => SelfAssessmentScreen(account: arg));
+      return MaterialPageRoute(builder: (context) => SelfAssessmentScreen(account: arg));
     case addRangeValueScreenRoute:
       var arg = settings.arguments;
-      return MaterialPageRoute(
-          builder: (context) => AddRangeValueScreen(rangeType: arg));
+      return MaterialPageRoute(builder: (context) => AddRangeValueScreen(rangeType: arg));
     // case chartScreenRoute:
     //   var arg = settings.arguments;
     //   return MaterialPageRoute(
