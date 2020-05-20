@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:starspat/cst_slider_thumb_circle.dart';
-import 'package:starspat/cst_slider_thumb_rect.dart';
 
 class SliderWidget extends StatefulWidget {
   final double sliderHeight;
@@ -8,11 +6,7 @@ class SliderWidget extends StatefulWidget {
   final int max;
   final fullWidth;
 
-  SliderWidget(
-      {this.sliderHeight = 48,
-      this.max = 10,
-      this.min = 0,
-      this.fullWidth = false});
+  SliderWidget({Key key, this.sliderHeight = 48, this.max = 10, this.min = 0, this.fullWidth = false}) : super(key: key);
 
   @override
   _SliderWidgetState createState() => _SliderWidgetState();
@@ -28,9 +22,7 @@ class _SliderWidgetState extends State<SliderWidget> {
     if (this.widget.fullWidth) paddingFactor = .3;
 
     return Container(
-      width: this.widget.fullWidth
-          ? double.infinity
-          : (this.widget.sliderHeight) * 5.5,
+      width: this.widget.fullWidth ? double.infinity : (this.widget.sliderHeight) * 5.5,
       height: (this.widget.sliderHeight),
       decoration: new BoxDecoration(
         borderRadius: new BorderRadius.all(
@@ -49,8 +41,7 @@ class _SliderWidgetState extends State<SliderWidget> {
             tileMode: TileMode.clamp),
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(this.widget.sliderHeight * paddingFactor,
-            2, this.widget.sliderHeight * paddingFactor, 2),
+        padding: EdgeInsets.fromLTRB(this.widget.sliderHeight * paddingFactor, 2, this.widget.sliderHeight * paddingFactor, 2),
         child: Row(
           children: <Widget>[
             Text(
@@ -109,5 +100,119 @@ class _SliderWidgetState extends State<SliderWidget> {
         ),
       ),
     );
+  }
+}
+
+class CustomSliderThumbCircle extends SliderComponentShape {
+  final double thumbRadius;
+  final int min;
+  final int max;
+
+  const CustomSliderThumbCircle({
+    @required this.thumbRadius,
+    this.min = 0,
+    this.max = 10,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size.fromRadius(thumbRadius);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    Animation<double> activationAnimation,
+    Animation<double> enableAnimation,
+    bool isDiscrete,
+    TextPainter labelPainter,
+    RenderBox parentBox,
+    SliderThemeData sliderTheme,
+    TextDirection textDirection,
+    double value,
+  }) {
+    final Canvas canvas = context.canvas;
+
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    TextSpan span = new TextSpan(
+      style: new TextStyle(
+        fontSize: thumbRadius * .8,
+        fontWeight: FontWeight.w700,
+        color: sliderTheme.thumbColor,
+      ),
+      text: getValue(value),
+    );
+
+    TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.center, textDirection: TextDirection.ltr);
+    tp.layout();
+    Offset textCenter = Offset(center.dx - (tp.width / 2), center.dy - (tp.height / 2));
+
+    canvas.drawCircle(center, thumbRadius * .9, paint);
+    tp.paint(canvas, textCenter);
+  }
+
+  String getValue(double value) {
+    return ((max * value).round()).toString();
+  }
+}
+
+class CustomSliderThumbRect extends SliderComponentShape {
+  final double thumbRadius;
+  final thumbHeight;
+  final int min;
+  final int max;
+
+  const CustomSliderThumbRect({
+    this.thumbRadius,
+    this.thumbHeight,
+    this.min,
+    this.max,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size.fromRadius(thumbRadius);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    Animation<double> activationAnimation,
+    Animation<double> enableAnimation,
+    bool isDiscrete,
+    TextPainter labelPainter,
+    RenderBox parentBox,
+    SliderThemeData sliderTheme,
+    TextDirection textDirection,
+    double value,
+  }) {
+    final Canvas canvas = context.canvas;
+
+    final rRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: center, width: thumbHeight * 1.2, height: thumbHeight * .6),
+      Radius.circular(thumbRadius * .4),
+    );
+
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    TextSpan span =
+        new TextSpan(style: new TextStyle(fontSize: thumbHeight * .3, fontWeight: FontWeight.w700, color: sliderTheme.thumbColor, height: 0.9), text: '${getValue(value)}');
+    TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.left, textDirection: TextDirection.ltr);
+    tp.layout();
+    Offset textCenter = Offset(center.dx - (tp.width / 2), center.dy - (tp.height / 2));
+
+    canvas.drawRRect(rRect, paint);
+    tp.paint(canvas, textCenter);
+  }
+
+  String getValue(double value) {
+    return ((max) * (value)).round().toString();
   }
 }
